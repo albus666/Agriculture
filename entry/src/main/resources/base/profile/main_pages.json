@@ -1,0 +1,12 @@
+{
+  "src": [
+    "pages/Index",
+    "pages/MainPage",
+    "pages/try",
+    "pages/Loading",
+    "pages/Main/About",
+    "pages/Main/AccountSecurity",
+    "pages/Main/CheckForUpdates",
+    "pages/Main/PersonalData"
+  ]
+}
