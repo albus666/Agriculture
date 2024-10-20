@@ -1,17 +1,12 @@
-import { Information,CommandBody } from '../tools/Interface';
+import { DeviceShadow, CommandBody } from '../tools/Interface';
 import Refresh from '../tools/Refresh';
 import CommandSent from '../tools/ComandSent'
 
 
 @Component
 export struct WaterPlanComponent {
-  // 配置信息
-  endpoint: string = '511aeb9d1a.st1.iotda-app.cn-north-4.myhuaweicloud.com' // 应用侧https端点
-  project_id: string = 'bf3001549a7f4da3b4f90ed04c3aa5ce' // 项目id
-  device_id: string = '6612bcb42ccc1a5838802a53_cjRGTFXd' // 设备id
-  service_id: string = '智慧农业' // 服务id
   @State timer: number = 0
-  @State information: Information = {
+  @State deviceShadow: DeviceShadow = {
     soilHumidity: '',
     luminance: '',
     pumpStatus: '停止',
@@ -19,14 +14,14 @@ export struct WaterPlanComponent {
     workStatus: '无人值守'
   };
   // 和刷新配合控制开关
-  @State pumpControl: boolean = false ? this.information.pumpStatus === '停止' ? true : false : false // 水泵控制初始化
-  @State shedControl: boolean = false ? this.information.shedStatus === '关闭' ? true : false : false // 棚罩控制初始化
-  @State workControl: boolean = false ? this.information.workStatus === '无人值守' ? true : false : false // 工作控制初始化
+  @State pumpControl: boolean = false ? this.deviceShadow.pumpStatus === '停止' ? true : false : false // 水泵控制初始化
+  @State shedControl: boolean = false ? this.deviceShadow.shedStatus === '关闭' ? true : false : false // 棚罩控制初始化
+  @State workControl: boolean = false ? this.deviceShadow.workStatus === '无人值守' ? true : false : false // 工作控制初始化
 
   aboutToAppear(): void {
-    Refresh.getShadowData(this.information)
+    Refresh.getShadowData(this.deviceShadow)
     this.timer = setInterval(async () => {
-      await Refresh.getShadowData(this.information)
+      await Refresh.getShadowData(this.deviceShadow)
     }, 3000)
   }
 

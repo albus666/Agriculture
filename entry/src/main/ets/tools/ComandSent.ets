@@ -1,15 +1,19 @@
-import { CommandBody } from './Interface'
+import { CommandBody, DeviceProperty } from './Interface'
 import { BusinessError } from '@kit.BasicServicesKit';
 import http from '@ohos.net.http';
 
 class CommandSent {
-  endpoint: string = '511aeb9d1a.st1.iotda-app.cn-north-4.myhuaweicloud.com' // 应用侧https端点
-  project_id: string = 'bf3001549a7f4da3b4f90ed04c3aa5ce' // 项目id
-  device_id: string = '6612bcb42ccc1a5838802a53_cjRGTFXd' // 设备id
-  service_id: string = '智慧农业' // 服务id
+  deviceProperty: DeviceProperty = {
+    endpoint_app: '511aeb9d1a.st1.iotda-app.cn-north-4.myhuaweicloud.com',
+    endpoint_device: '511aeb9d1a.st1.iotda-device.cn-north-4.myhuaweicloud.com', // 设备侧https端点
+    project_id: 'bf3001549a7f4da3b4f90ed04c3aa5ce', // 项目id
+    device_id: '6612bcb42ccc1a5838802a53_cjRGTFXd', // 设备id
+    service_id: '智慧农业' // 服务id
+  }
 
   async Sent(params: CommandBody) {
-    let url: string = `https://${this.endpoint}/v5/iot/${this.project_id}/devices/${this.device_id}/commands`
+    let url: string =
+      `https://${this.deviceProperty.endpoint_app}/v5/iot/${this.deviceProperty.project_id}/devices/${this.deviceProperty.device_id}/commands`
     let httpRequest = http.createHttp();
 
     let options: http.HttpRequestOptions = {

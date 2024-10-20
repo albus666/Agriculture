@@ -1,18 +1,14 @@
-import { Information, CommandBody } from '../tools/Interface'
-import http from '@ohos.net.http';
-import HttpTool from '../tools/HttpTool';
+import { DeviceShadow } from '../tools/Interface'
 import Refresh from '../tools/Refresh';
+import UpdateReport from '../tools/UpdateReport';
+
 
 @Component
 export default struct HomeComponent {
-  // 配置信息
-  endpoint: string = '511aeb9d1a.st1.iotda-app.cn-north-4.myhuaweicloud.com' // 应用侧https端点
-  project_id: string = 'bf3001549a7f4da3b4f90ed04c3aa5ce' // 项目id
-  device_id: string = '6612bcb42ccc1a5838802a53_cjRGTFXd' // 设备id
-  service_id: string = '智慧农业' // 服务id
   @State timer: number = 0
+  @State access_token: string = ''
   // 设备属性
-  @State information: Information = {
+  @State devicesShadow: DeviceShadow = {
     soilHumidity: '',
     luminance: '',
     pumpStatus: '停止',
@@ -25,19 +21,10 @@ export default struct HomeComponent {
 
   // 页面加载时，获取设备影子数据
   aboutToAppear(): void {
-    Refresh.getShadowData(this.information)
+    Refresh.getShadowData(this.devicesShadow)
     this.timer = setInterval(async () => {
-      await Refresh.getShadowData(this.information)
+      await Refresh.getShadowData(this.devicesShadow)
     }, 3000)
-  }
-
-  // 属性上报(https协议)
-  async report(params: CommandBody) {
-    let url: string = `https://${this.endpoint}/v5/devices/${this.device_id}/sys/properties/report`
-
-    HttpTool.post(url, params, (data: http.HttpResponse) => {
-      console.info('ShadowData:' + JSON.stringify(data.result));
-    })
   }
 
   build() {
@@ -77,7 +64,7 @@ export default struct HomeComponent {
         Text('土壤湿度:')
           .fontSize(22)
           .fontWeight(FontWeight.Bold)
-        Text(`${this.information.soilHumidity}`)
+        Text(`${this.devicesShadow.soilHumidity}`)
           .fontSize(20)
 
       }
@@ -89,7 +76,7 @@ export default struct HomeComponent {
         Text('光线强度:')
           .fontSize(22)
           .fontWeight(FontWeight.Bold)
-        Text(`${this.information.luminance}`)
+        Text(`${this.devicesShadow.luminance}`)
           .fontSize(20)
 
       }
@@ -101,7 +88,7 @@ export default struct HomeComponent {
         Text('水泵状态:')
           .fontSize(22)
           .fontWeight(FontWeight.Bold)
-        Text(this.information.pumpStatus)
+        Text(this.devicesShadow.pumpStatus)
           .fontSize(20)
       }
       .width('95%')
@@ -112,7 +99,7 @@ export default struct HomeComponent {
         Text('棚罩状态:')
           .fontSize(22)
           .fontWeight(FontWeight.Bold)
-        Text(this.information.shedStatus)
+        Text(this.devicesShadow.shedStatus)
           .fontSize(20)
 
       }
@@ -124,13 +111,17 @@ export default struct HomeComponent {
         Text('工作模式:')
           .fontSize(22)
           .fontWeight(FontWeight.Bold)
-        Text(this.information.workStatus)
+        Text(this.devicesShadow.workStatus)
           .fontSize(20)
 
       }
       .width('95%')
       .justifyContent(FlexAlign.SpaceBetween)
 
+      Button('请求access_token')
+        .fontSize(24)
+        .onClick(() =>
+        UpdateReport.getAccessToken())
     }
     .width('100%')
     .height('100%')
